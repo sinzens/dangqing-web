@@ -69,6 +69,12 @@ export default Vue.extend({
     }
   },
 
+  watch: {
+    paths (value) {
+      this.$store.dispatch('setPathsAtd', value)
+    }
+  },
+
   created () {
     this.initialize()
   }

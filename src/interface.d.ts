@@ -41,3 +41,12 @@ export interface PathItemDta {
   areaNumber: string,
   path: string
 }
+
+export interface BatchBasicModel {
+  selectedBatches: string,
+  initialSpeed: string,
+  preferredSpeed: string,
+  recordPositionInterval: string,
+  writeCsvInterval: string,
+  numberOfPeople: string
+}

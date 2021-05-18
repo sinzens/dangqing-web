@@ -72,6 +72,12 @@ export default Vue.extend({
     }
   },
 
+  watch: {
+    paths (value) {
+      this.$store.dispatch('setPathsDta', value)
+    }
+  },
+
   created () {
     this.initialize()
   }

@@ -88,15 +88,15 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-btn color="primary" v-text="exportDataText" />
-        <v-dialog v-model="dialogDelete" max-width="500px">
+        <!--  -->
+        <v-dialog v-model="dialogDelete" max-width="300px">
           <v-card>
-            <v-card-title class="headline" v-text="deleteConfirmText"></v-card-title>
+            <v-card-title class="headline" v-text="deleteConfirmText" />
             <v-card-actions>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn color="blue darken-1" text v-text="cancelText" @click="closeDelete" />
               <v-btn color="blue darken-1" text v-text="confirmText" @click="deleteItemConfirm" />
-              <v-spacer></v-spacer>
+              <v-spacer />
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -138,7 +138,6 @@ export default Vue.extend({
     dialogNewItemText: '新增数据',
     dialogEditItemText: '修改数据',
 
-    exportDataText: '导出数据',
     cancelText: '取消',
     saveText: '保存',
     confirmText: '确定',

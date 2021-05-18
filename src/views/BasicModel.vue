@@ -73,10 +73,12 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { InputForm } from '../interface'
+import Public from '../plugins/public'
+import { BatchBasicModel, InputForm } from '../interface'
 
 export default Vue.extend({
   name: 'BasicModel',
+
   data: () => ({
     selectBatchLabel: '测试波次',
     selectAllBatchesButtonText: '全部选择',
@@ -108,8 +110,9 @@ export default Vue.extend({
       value: ''
     } as InputForm,
 
-    selectedBatches: [] as string[],
+    batchNumbers: Public.numberArrayFromRange(1, 233),
     batchItems: [] as string[],
+    selectedBatches: [] as string[],
 
     isFloat: (value: string) => {
       return value.match(RegExp(/^(?:[1-9]\d*|0)?(?:\.\d+)?$/)) !== null
@@ -122,8 +125,8 @@ export default Vue.extend({
 
   methods: {
     initBatchItems () {
-      this.batchItems = Array.from({ length: 233 }, (_, index) => {
-        return `第${index + 1}波次`
+      this.batchItems = this.batchNumbers.map((number) => {
+        return `第${number}波次`
       })
     },
 
@@ -139,6 +142,12 @@ export default Vue.extend({
     deselectAllBatches () {
       this.selectedBatches.splice(0, this.selectedBatches.length)
     }
+
+    // selectedBatchesInline () {
+    //   return this.selectedBatches.map((batchItem) => {
+    //     return parseInt((batchItem.match(/\d+(.\d+)?/g) as RegExpMatchArray)[0])
+    //   }).sort().join(',')
+    // }
   },
 
   computed: {
@@ -148,17 +157,38 @@ export default Vue.extend({
         (value: string) => this.isFloat(value) || '必须是非负小数'
       ]
     },
+
     intervalRules () {
       return [
         (value: string) => !!value || '不能为空',
         (value: string) => this.isInt(value) || '必须是正整数'
       ]
     },
+
     numberRules () {
       return [
         (value: string) => !!value || '不能为空',
         (value: string) => this.isInt(value) || '必须是正整数'
       ]
+    },
+
+    batchData () {
+      return {
+        selectedBatches: this.selectedBatches.map((batchItem) => {
+          return parseInt((batchItem.match(/\d+(.\d+)?/g) as RegExpMatchArray)[0])
+        }).sort().join(','),
+        initialSpeed: this.initialSpeed.value,
+        preferredSpeed: this.preferredSpeed.value,
+        recordPositionInterval: this.recordPositionInterval.value,
+        writeCsvInterval: this.writeCsvInterval.value,
+        numberOfPeople: this.numberOfPeople.value
+      } as BatchBasicModel
+    }
+  },
+
+  watch: {
+    batchData (value) {
+      this.$store.dispatch('setBatchBasicModel', value)
     }
   },
 

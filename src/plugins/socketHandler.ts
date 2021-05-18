@@ -22,24 +22,17 @@ export default class SocketHandler {
     console.log(`Database version is: ${data}`)
   }
 
-  // private onGetBatches (data: string) {
-  //   const batches = JSON.parse(data)
-  //   this.messageCallback(batches)
-  // }
-
-  // private onGetPathsAtd (data: string) {
-  //   const paths = JSON.parse(data)
-  //   this.messageCallback(paths)
-  // }
-
-  // private onGetPathsDta (data: string) {
-  //   const paths = JSON.parse(data)
-  //   this.messageCallback(paths)
-  // }
-
   private onGetJsonData (data: string) {
     const paths = JSON.parse(data)
     this.messageCallback(paths)
+  }
+
+  private onGetInfo (info: string) {
+    this.messageCallback(`info|${info}`)
+  }
+
+  private onGetError (error: string) {
+    this.messageCallback(`error|${error}`)
   }
 
   protected onSocketOpen () {
@@ -55,10 +48,6 @@ export default class SocketHandler {
       const value = results[2]
 
       switch (command) {
-        // case 'version': this.onGetVersion(value); break
-        // case 'batches': this.onGetBatches(value); break
-        // case 'pathsAtd': this.onGetPathsAtd(value); break
-        // case 'pathsDta': this.onGetPathsDta(value); break
         case 'version':
           this.onGetVersion(value)
           break
@@ -66,6 +55,12 @@ export default class SocketHandler {
         case 'pathsAtd':
         case 'pathsDta':
           this.onGetJsonData(value)
+          break
+        case 'info':
+          this.onGetInfo(value)
+          break
+        case 'error':
+          this.onGetError(value)
           break
       }
     }

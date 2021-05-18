@@ -78,6 +78,12 @@ export default Vue.extend({
     }
   },
 
+  watch: {
+    batches (value) {
+      this.$store.dispatch('setBatches', value)
+    }
+  },
+
   created () {
     this.initialize()
   }
