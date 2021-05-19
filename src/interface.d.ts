@@ -13,8 +13,9 @@ export interface InputForm {
 
 export interface DataHeader {
   text: string,
-  align: string,
-  value: string
+  align?: string,
+  value: string,
+  sortable?: boolean
 }
 
 export interface BatchItem {
@@ -27,7 +28,24 @@ export interface BatchItem {
   scCapacity: string
 }
 
+export interface BatchItemDb {
+  batchno: string,
+  arrialtime: string,
+  arrivalnum: string,
+  dropoff_no: string,
+  stand_no: string,
+  security_no: string,
+  sc_capacity: string
+}
+
 export interface PathItemAtd {
+  area: string,
+  name: string,
+  destination: string,
+  path: string
+}
+
+export interface PathItemAtdDb {
   area: string,
   name: string,
   destination: string,
@@ -42,6 +60,14 @@ export interface PathItemDta {
   path: string
 }
 
+export interface PathItemDtaDb {
+  name: string,
+  content: string,
+  security_no: string,
+  areanumber: string,
+  path: string
+}
+
 export interface BatchBasicModel {
   selectedBatches: string,
   initialSpeed: string,
@@ -49,4 +75,14 @@ export interface BatchBasicModel {
   recordPositionInterval: string,
   writeCsvInterval: string,
   numberOfPeople: string
+}
+
+export interface DataBackup {
+  identifier: string,
+  data: unknown[]
+}
+
+export interface TableDataBackup {
+  sourceTable: string,
+  backup: DataBackup[]
 }

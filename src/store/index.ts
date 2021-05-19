@@ -1,18 +1,35 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 import {
-  BatchBasicModel, BatchItem, PathItemAtd, PathItemDta
+  BatchBasicModel,
+  BatchItem,
+  BatchItemDb,
+  DataBackup,
+  PathItemAtd,
+  PathItemAtdDb,
+  PathItemDta,
+  PathItemDtaDb,
+  TableDataBackup
 } from '../interface'
 import dataMap from '../plugins/dataMap'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  plugins: [createPersistedState()],
+
   state: {
     batchBasicModel: {} as BatchBasicModel,
     batches: [] as BatchItem[],
     pathsAtd: [] as PathItemAtd[],
-    pathsDta: [] as PathItemDta[]
+    pathsDta: [] as PathItemDta[],
+    backups: {
+      batch: [] as DataBackup[],
+      atdPath: [] as DataBackup[],
+      dtaPath: [] as DataBackup[]
+    } as Record<string, DataBackup[]>,
+    predefinedPaths: [] as string[]
   },
 
   mutations: {
@@ -30,6 +47,22 @@ export default new Vuex.Store({
 
     setPathsDtaCommit (state, value) {
       state.pathsDta = value
+    },
+
+    setBackupsCommit (state, value: TableDataBackup) {
+      if (
+        Object.prototype.hasOwnProperty.call(
+          state.backups,
+          value.sourceTable
+        )
+      ) {
+        state.backups[value.sourceTable] =
+          ([] as DataBackup[]).concat(value.backup)
+      }
+    },
+
+    addPredefinedPathsCommit (state, value: string) {
+      state.predefinedPaths.push(value)
     }
   },
 
@@ -48,11 +81,20 @@ export default new Vuex.Store({
 
     setPathsDta (context, value) {
       context.commit('setPathsDtaCommit', value)
+    },
+
+    setBackups (context, value) {
+      context.commit('setBackupsCommit', value)
+    },
+
+    addPredefinedPaths (context, value) {
+      context.commit('addPredefinedPathsCommit', value)
     }
   },
 
   getters: {
     batchBasicModel: state => [state.batchBasicModel],
+
     batches: state => state.batches.map((batch_) => {
       const batch = dataMap.batchTextToPlainData(batch_)
       return {
@@ -63,8 +105,9 @@ export default new Vuex.Store({
         stand_no: batch.standNo,
         security_no: batch.securityNo,
         sc_capacity: batch.scCapacity
-      }
+      } as BatchItemDb
     }),
+
     pathsAtd: state => state.pathsAtd.map((path_) => {
       const path = dataMap.pathTextToPlainDataAtd(path_)
       return {
@@ -72,8 +115,9 @@ export default new Vuex.Store({
         name: path.name,
         destination: path.destination,
         path: path.path
-      }
+      } as PathItemAtdDb
     }),
+
     pathsDta: state => state.pathsDta.map((path_) => {
       const path = dataMap.pathTextToPlainDataDta(path_)
       return {
@@ -82,8 +126,11 @@ export default new Vuex.Store({
         security_no: path.securityNo,
         areanumber: path.areaNumber,
         path: path.path
-      }
-    })
+      } as PathItemDtaDb
+    }),
+
+    backups: state => state.backups,
+    predefinedPaths: state => state.predefinedPaths
   },
 
   modules: {}

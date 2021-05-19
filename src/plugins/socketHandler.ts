@@ -67,11 +67,11 @@ export default class SocketHandler {
   }
 
   protected onSocketError (_event: Event) {
-    console.log('Failed to connect.')
+    alert('与服务器的连接发生错误')
   }
 
   protected onSocketClose (_event: CloseEvent) {
-    console.log('Connection closed.')
+    alert('与服务器的连接被关闭')
   }
 
   public socketSend (

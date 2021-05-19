@@ -5,7 +5,7 @@
         <data-table
           sourceTable="atdPath"
           :headers="headers"
-          :items="paths"
+          v-model="paths"
           :editedItemModel="editedItemModel"
           :defaultItemModel="defaultItemModel"
           sortBy="area"
@@ -70,8 +70,11 @@ export default Vue.extend({
   },
 
   watch: {
-    paths (value) {
-      this.$store.dispatch('setPathsAtd', value)
+    paths: {
+      handler (value) {
+        this.$store.dispatch('setPathsAtd', value)
+      },
+      deep: true
     }
   },
 

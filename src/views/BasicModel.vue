@@ -2,70 +2,74 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-row>
-          <v-select
-            v-model="selectedBatches"
-            :items="batchItems"
-            :label="selectBatchLabel"
-            clearable
-            multiple
-          >
-            <template slot="append-outer">
-                <v-btn
-                  color="primary"
-                  class="mr-2"
-                  v-text="selectAllBatchesButtonText"
-                  @click="selectAllBatches"
-                ></v-btn>
-                <v-btn
-                  color="primary"
-                  class="mr-2"
-                  v-text="selectInvertBatchesButtonText"
-                  @click="selectInvertBatches"
-                ></v-btn>
-                <v-btn
-                  color="primary"
-                  v-text="deselectAllBatchesButtonText"
-                  @click="deselectAllBatches"
-                ></v-btn>
-            </template>
-          </v-select>
-        </v-row>
-        <v-row>
-          <v-text-field
-            v-model="initialSpeed.value"
-            :label="initialSpeed.label"
-            :rules="speedRules"
-          />
-        </v-row>
-        <v-row>
-          <v-text-field
-            v-model="preferredSpeed.value"
-            :label="preferredSpeed.label"
-            :rules="speedRules"
-          />
-        </v-row>
-        <v-row>
-          <v-text-field
-            v-model="recordPositionInterval.value"
-            :label="recordPositionInterval.label"
-            :rules="intervalRules"
-          />
-        </v-row>
-        <v-row>
-          <v-text-field
-            v-model="writeCsvInterval.value"
-            :label="writeCsvInterval.label"
-            :rules="intervalRules"
-          />
-        </v-row>
-        <v-row>
-          <v-text-field
-            v-model="numberOfPeople.value"
-            :label="numberOfPeople.label"
-            :rules="numberRules"
-          />
-        </v-row>
+        <v-col>
+          <v-container>
+            <v-row>
+              <v-select
+                v-model="selectedBatches"
+                :items="batchItems"
+                :label="selectBatchLabel"
+                clearable
+                multiple
+              >
+                <template slot="append-outer">
+                    <v-btn
+                      color="primary"
+                      class="mr-2"
+                      v-text="selectAllBatchesButtonText"
+                      @click="selectAllBatches"
+                    ></v-btn>
+                    <v-btn
+                      color="primary"
+                      class="mr-2"
+                      v-text="selectInvertBatchesButtonText"
+                      @click="selectInvertBatches"
+                    ></v-btn>
+                    <v-btn
+                      color="primary"
+                      v-text="deselectAllBatchesButtonText"
+                      @click="deselectAllBatches"
+                    ></v-btn>
+                </template>
+              </v-select>
+            </v-row>
+            <v-row>
+              <v-text-field
+                v-model="initialSpeed.value"
+                :label="initialSpeed.label"
+                :rules="speedRules"
+              />
+            </v-row>
+            <v-row>
+              <v-text-field
+                v-model="preferredSpeed.value"
+                :label="preferredSpeed.label"
+                :rules="speedRules"
+              />
+            </v-row>
+            <v-row>
+              <v-text-field
+                v-model="recordPositionInterval.value"
+                :label="recordPositionInterval.label"
+                :rules="intervalRules"
+              />
+            </v-row>
+            <v-row>
+              <v-text-field
+                v-model="writeCsvInterval.value"
+                :label="writeCsvInterval.label"
+                :rules="intervalRules"
+              />
+            </v-row>
+            <v-row>
+              <v-text-field
+                v-model="numberOfPeople.value"
+                :label="numberOfPeople.label"
+                :rules="numberRules"
+              />
+            </v-row>
+          </v-container>
+        </v-col>
       </v-col>
     </v-row>
   </v-container>
@@ -142,12 +146,6 @@ export default Vue.extend({
     deselectAllBatches () {
       this.selectedBatches.splice(0, this.selectedBatches.length)
     }
-
-    // selectedBatchesInline () {
-    //   return this.selectedBatches.map((batchItem) => {
-    //     return parseInt((batchItem.match(/\d+(.\d+)?/g) as RegExpMatchArray)[0])
-    //   }).sort().join(',')
-    // }
   },
 
   computed: {

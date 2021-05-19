@@ -5,7 +5,7 @@
         <data-table
           sourceTable="batch"
           :headers="headers"
-          :items="batches"
+          v-model="batches"
           :editedItemModel="editedItemModel"
           :defaultItemModel="defaultItemModel"
           sortBy="batchNo"
@@ -79,8 +79,11 @@ export default Vue.extend({
   },
 
   watch: {
-    batches (value) {
-      this.$store.dispatch('setBatches', value)
+    batches: {
+      handler (value) {
+        this.$store.dispatch('setBatches', value)
+      },
+      deep: true
     }
   },
 

@@ -28,11 +28,52 @@
         <router-view />
         <v-row>
           <v-spacer />
+          <v-dialog
+            v-model="showDefinePathsDialog"
+            persistent
+            max-width="300"
+            v-if="isPathTablePage"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="primary"
+                class="mr-9"
+                v-bind="attrs"
+                v-on="on"
+                v-text="definePathsButtonText"
+              ></v-btn>
+            </template>
+            <v-card>
+              <v-card-title class="headline" v-text="definePathsDialogTitle" />
+              <v-card-text>
+                <v-text-field
+                  v-model="definePathsInput"
+                  :label="definePathsInputText"
+                  :rules="definePathsRules"
+                ></v-text-field>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer />
+                <v-btn
+                  color="blue darken-1"
+                  text
+                  v-text="cancelText"
+                  @click="showDefinePathsDialog = false"
+                ></v-btn>
+                <v-btn
+                  color="blue darken-1"
+                  text
+                  v-text="confirmText"
+                  @click="addPredefinedPath"
+                ></v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
           <v-dialog v-model="showExportDialog" persistent max-width="600">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
-                class="mt-10 mr-3"
+                class="mr-9"
                 v-bind="attrs"
                 v-on="on"
                 v-text="exportDataButtonText"
@@ -43,7 +84,11 @@
               <v-card-text>
                 <v-row>
                   <v-col cols="8">
-                    <v-text-field v-model="exportFileName" :label="exportDataInputText" />
+                    <v-text-field
+                      v-model="exportFileName"
+                      :label="exportDataInputText"
+                      :rules="exportDataFileNameRules"
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="4">
                     <v-select
@@ -74,13 +119,13 @@
             </v-card>
           </v-dialog>
         </v-row>
+        <notification-dialog
+          v-model="showNotificationDialog"
+          :title="notificationTitle"
+          :content="notificationContent"
+        ></notification-dialog>
       </v-card-text>
     </div>
-    <notification-dialog
-      v-model="showNotificationDialog"
-      :title="notificationTitle"
-      :content="notificationContent"
-    ></notification-dialog>
   </v-card>
 </template>
 
@@ -99,14 +144,20 @@ export default Vue.extend({
     exportDataButtonText: '导出数据',
     exportDataInputText: '文件名',
     exportDataSelectExtText: '后缀',
+    definePathsDialogTitle: '添加预制路径',
+    definePathsButtonText: '添加路径',
+    definePathsInputText: '输入路径',
     cancelText: '取消',
     confirmText: '确定',
     noDataText: '没有任何数据',
 
     showNotificationDialog: false,
     showExportDialog: false,
+    showDefinePathsDialog: false,
+
     exportFileName: '',
     exportFileExt: 'xls',
+    definePathsInput: '',
     selectedNavigateItem: 0,
 
     notificationTitle: '',
@@ -114,12 +165,13 @@ export default Vue.extend({
 
     navigateItems: [
       { title: '基本模型参数配置', icon: 'mdi-view-dashboard', link: '/BasicModel' },
-      { title: '波次数据表配置', icon: 'mdi-image', link: '/BatchTable' },
-      { title: '落客到安检数据表配置', icon: 'mdi-help-box', link: '/AtdPathTable' },
-      { title: '安检点到指定区域数据表配置', icon: 'mdi-help-box', link: '/DtaPathTable' }
+      { title: '波次数据表配置', icon: 'mdi-table', link: '/BatchTable' },
+      { title: '落客到安检数据表配置', icon: 'mdi-table', link: '/AtdPathTable' },
+      { title: '安检点到指定区域数据表配置', icon: 'mdi-table', link: '/DtaPathTable' }
     ],
 
-    exportFileExts: ['xls', 'xlsx']
+    exportFileExts: ['xls', 'xlsx'],
+    isPathTablePage: false
   }),
 
   methods: {
@@ -142,11 +194,11 @@ export default Vue.extend({
     exportData () {
       let data: unknown
       this.showExportDialog = false
-      switch (this.selectedNavigateItem) {
-        case 0: data = this.$store.getters.batchBasicModel; break
-        case 1: data = this.$store.getters.batches; break
-        case 2: data = this.$store.getters.pathsAtd; break
-        case 3: data = this.$store.getters.pathsDta; break
+      switch (this.$router.currentRoute.path) {
+        case '/BasicModel': data = this.$store.getters.batchBasicModel; break
+        case '/BatchTable': data = this.$store.getters.batches; break
+        case '/AtdPathTable': data = this.$store.getters.pathsAtd; break
+        case '/DtaPathTable': data = this.$store.getters.pathsDta; break
         default: data = {}; break
       }
 
@@ -174,6 +226,11 @@ export default Vue.extend({
           this.showNotificationDialog = true
         }
       )
+    },
+
+    addPredefinedPath () {
+      this.$store.dispatch('addPredefinedPaths', this.definePathsInput)
+      this.showDefinePathsDialog = false
     }
   },
 
@@ -184,6 +241,19 @@ export default Vue.extend({
       } else {
         return this.validPageTitle
       }
+    },
+
+    exportDataFileNameRules () {
+      return [
+        (value: string) => !!value || '不能为空'
+      ]
+    },
+
+    definePathsRules () {
+      return [
+        (value: string) => !!value || '不能为空',
+        (value: string) => value.includes(',') || '必须用逗号隔开'
+      ]
     }
   },
 
@@ -192,6 +262,13 @@ export default Vue.extend({
       if (typeof (after) !== 'undefined') {
         this.navigate(after)
       }
+    },
+
+    $route (to) {
+      this.isPathTablePage = (
+        to.path === '/AtdPathTable' ||
+        to.path === '/DtaPathTable'
+      )
     }
   },
 

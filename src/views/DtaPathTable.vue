@@ -5,7 +5,7 @@
         <data-table
           sourceTable="dtaPath"
           :headers="headers"
-          :items="paths"
+          v-model="paths"
           :editedItemModel="editedItemModel"
           :defaultItemModel="defaultItemModel"
           sortBy="name"
@@ -73,8 +73,11 @@ export default Vue.extend({
   },
 
   watch: {
-    paths (value) {
-      this.$store.dispatch('setPathsDta', value)
+    paths: {
+      handler (value) {
+        this.$store.dispatch('setPathsDta', value)
+      },
+      deep: true
     }
   },
 
