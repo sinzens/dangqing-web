@@ -172,9 +172,12 @@ export default Vue.extend({
 
     batchData () {
       return {
-        selectedBatches: this.selectedBatches.map((batchItem) => {
-          return parseInt((batchItem.match(/\d+(.\d+)?/g) as RegExpMatchArray)[0])
-        }).sort().join(','),
+        selectedBatches: this.selectedBatches
+          .map((batchItem) => {
+            return parseInt((batchItem.match(/\d+(.\d+)?/g) as RegExpMatchArray)[0])
+          }).sort((a, b) => {
+            return a - b
+          }).join(','),
         initialSpeed: this.initialSpeed.value,
         preferredSpeed: this.preferredSpeed.value,
         recordPositionInterval: this.recordPositionInterval.value,
